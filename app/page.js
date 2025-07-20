@@ -1,41 +1,41 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+"use client";
+import React, { useState } from "react";
 
-export default function Home() {
-  const [walletAddress, setWalletAddress] = useState('');
-  const [balance, setBalance] = useState(null);
+export default function Page() {
+  const [recipient, setRecipient] = useState("");
+  const [amount, setAmount] = useState("");
+  const [status, setStatus] = useState("");
 
-  useEffect(() => {
-    async function loadWallet() {
-      if (window.tronWeb && window.tronWeb.ready) {
-        const address = window.tronWeb.defaultAddress.base58;
-        setWalletAddress(address);
-
-        const contract = await window.tronWeb.contract().at('TA4SRuaiPgjhaJosgxjujS2myspLdoxcHx');
-        const result = await contract.balanceOf(address).call();
-        const value = parseInt(result._hex || result, 16) / 1e6;
-        setBalance(value);
-      }
+  const handleSend = () => {
+    if (!recipient || !amount) {
+      setStatus("Please enter all fields");
+      return;
     }
-
-    loadWallet();
-  }, []);
+    setStatus("✅ Transaction Sent (Mocked)");
+  };
 
   return (
-    <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-8">
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
-        <h1 className="text-3xl font-bold mb-4">USDXT DApp</h1>
-        {walletAddress ? (
-          <div className="text-center">
-            <p className="mb-2">Wallet: {walletAddress}</p>
-            <p className="mb-2">USDXT Balance: {balance}</p>
-            <p className="text-green-400 font-semibold">Estimated Value: ${balance?.toFixed(2)} USD</p>
-          </div>
-        ) : (
-          <p className="text-yellow-400">Connect your Tron wallet...</p>
-        )}
-      </motion.div>
-    </main>
+    <div style={{ minHeight: "100vh", background: "#111", color: "#fff", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
+      <img src="/usdt.png" alt="USDXT" width="80" />
+      <h2 style={{ fontSize: "24px", marginBottom: "1rem" }}>Send USDXT</h2>
+      <input
+        type="text"
+        placeholder="Recipient Address"
+        value={recipient}
+        onChange={(e) => setRecipient(e.target.value)}
+        style={{ marginBottom: "1rem", padding: "0.5rem", width: "100%", maxWidth: "300px", borderRadius: "8px" }}
+      />
+      <input
+        type="number"
+        placeholder="Amount"
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+        style={{ marginBottom: "1rem", padding: "0.5rem", width: "100%", maxWidth: "300px", borderRadius: "8px" }}
+      />
+      <button onClick={handleSend} style={{ backgroundColor: "#facc15", color: "#000", padding: "0.5rem 1rem", borderRadius: "8px" }}>
+        Send
+      </button>
+      {status && <p style={{ marginTop: "1rem", color: "lightgreen" }}>{status}</p>}
+    </div>
   );
 }
